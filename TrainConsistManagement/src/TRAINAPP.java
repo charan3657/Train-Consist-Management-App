@@ -1,59 +1,35 @@
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.LinkedList;
 
 public class TRAINAPP {
 
     public static void main(String[] args) {
-        // ==========================
-        // UC1: Initialize Train Consist
-        // ==========================
-        System.out.println("=== Train Consist Management App ===\n");
-
-        // Initialize empty list for bogies
-        List<String> passengerBogies = new ArrayList<>();
-        System.out.println("Initial bogie count: " + passengerBogies.size());
+        System.out.println("=== Train Consist Management App: Ordered Bogie IDs ===\n");
 
         // ==========================
-        // UC2: Add Passenger Bogies
+        // Initialize LinkedList for train consist
         // ==========================
-        System.out.println("\n--- Adding Passenger Bogies ---");
+        LinkedList<String> trainConsist = new LinkedList<>();
 
-        // Add bogies
-        passengerBogies.add("Sleeper");
-        passengerBogies.add("AC Chair");
-        passengerBogies.add("First Class");
+        // Add bogies in order
+        trainConsist.add("Engine");
+        trainConsist.add("Sleeper");
+        trainConsist.add("AC");
+        trainConsist.add("Cargo");
+        trainConsist.add("Guard");
 
-        // Display after insertion
-        System.out.println("Passenger bogies after addition: " + passengerBogies);
+        System.out.println("Initial ordered train consist: " + trainConsist);
 
-        // Remove one bogie
-        passengerBogies.remove("AC Chair");
-        System.out.println("Passenger bogies after removing AC Chair: " + passengerBogies);
+        // Insert Pantry Car at position 2 (0-based index)
+        trainConsist.add(2, "Pantry Car");
+        System.out.println("After adding Pantry Car at index 2: " + trainConsist);
 
-        // Check existence
-        if (passengerBogies.contains("Sleeper")) {
-            System.out.println("Sleeper bogie exists in the consist.");
-        } else {
-            System.out.println("Sleeper bogie does not exist.");
-        }
+        // Remove first and last bogie
+        String removedFirst = trainConsist.removeFirst();
+        String removedLast = trainConsist.removeLast();
+        System.out.println("Removed first bogie: " + removedFirst);
+        System.out.println("Removed last bogie: " + removedLast);
 
-        // ==========================
-        // UC3: Track Unique Bogie IDs
-        // ==========================
-        System.out.println("\n--- Tracking Unique Bogie IDs ---");
-
-        Set<String> bogieIDs = new HashSet<>();
-
-        // Add IDs (some duplicates intentionally)
-        bogieIDs.add("BG101");
-        bogieIDs.add("BG102");
-        bogieIDs.add("BG103");
-        bogieIDs.add("BG101"); // duplicate
-        bogieIDs.add("BG102"); // duplicate
-
-        // Display unique bogie IDs
-        System.out.println("Unique bogie IDs in the consist: " + bogieIDs);
+        // Final ordered train consist
+        System.out.println("Final ordered train consist: " + trainConsist);
     }
 }
