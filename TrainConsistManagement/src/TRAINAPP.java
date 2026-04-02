@@ -1,35 +1,30 @@
-import java.util.LinkedList;
+import java.util.LinkedHashSet;
 
 public class TRAINAPP {
 
     public static void main(String[] args) {
-        System.out.println("=== Train Consist Management App: Ordered Bogie IDs ===\n");
+        System.out.println("=== Train Consist Management App: Preserve Insertion Order ===\n");
 
         // ==========================
-        // Initialize LinkedList for train consist
+        // Initialize LinkedHashSet for train formation
         // ==========================
-        LinkedList<String> trainConsist = new LinkedList<>();
+        LinkedHashSet<String> trainFormation = new LinkedHashSet<>();
 
-        // Add bogies in order
-        trainConsist.add("Engine");
-        trainConsist.add("Sleeper");
-        trainConsist.add("AC");
-        trainConsist.add("Cargo");
-        trainConsist.add("Guard");
+        // Attach bogies in sequence
+        trainFormation.add("Engine");
+        trainFormation.add("Sleeper");
+        trainFormation.add("Cargo");
+        trainFormation.add("Guard");
 
-        System.out.println("Initial ordered train consist: " + trainConsist);
+        System.out.println("Initial train formation: " + trainFormation);
 
-        // Insert Pantry Car at position 2 (0-based index)
-        trainConsist.add(2, "Pantry Car");
-        System.out.println("After adding Pantry Car at index 2: " + trainConsist);
+        // Attempt to attach a duplicate bogie
+        boolean added = trainFormation.add("Sleeper"); // This will be ignored
+        if (!added) {
+            System.out.println("Duplicate bogie 'Sleeper' not added.");
+        }
 
-        // Remove first and last bogie
-        String removedFirst = trainConsist.removeFirst();
-        String removedLast = trainConsist.removeLast();
-        System.out.println("Removed first bogie: " + removedFirst);
-        System.out.println("Removed last bogie: " + removedLast);
-
-        // Final ordered train consist
-        System.out.println("Final ordered train consist: " + trainConsist);
+        // Display final formation
+        System.out.println("Final train formation (insertion order preserved, no duplicates): " + trainFormation);
     }
 }
