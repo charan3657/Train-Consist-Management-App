@@ -1,30 +1,35 @@
-import java.util.LinkedHashSet;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TRAINAPP {
 
     public static void main(String[] args) {
-        System.out.println("=== Train Consist Management App: Preserve Insertion Order ===\n");
+        System.out.println("=== Train Consist Management App: Bogie Capacity Mapping ===\n");
 
         // ==========================
-        // Initialize LinkedHashSet for train formation
+        // Initialize HashMap for bogie-capacity mapping
         // ==========================
-        LinkedHashSet<String> trainFormation = new LinkedHashSet<>();
+        HashMap<String, Integer> bogieCapacityMap = new HashMap<>();
 
-        // Attach bogies in sequence
-        trainFormation.add("Engine");
-        trainFormation.add("Sleeper");
-        trainFormation.add("Cargo");
-        trainFormation.add("Guard");
+        // Add passenger bogies and their seating capacities
+        bogieCapacityMap.put("Sleeper", 72);
+        bogieCapacityMap.put("AC Chair", 60);
+        bogieCapacityMap.put("First Class", 40);
 
-        System.out.println("Initial train formation: " + trainFormation);
+        // Add goods bogies and their load capacities (in tons)
+        bogieCapacityMap.put("Rectangular Goods", 50);
+        bogieCapacityMap.put("Cylindrical Goods", 40);
 
-        // Attempt to attach a duplicate bogie
-        boolean added = trainFormation.add("Sleeper"); // This will be ignored
-        if (!added) {
-            System.out.println("Duplicate bogie 'Sleeper' not added.");
+        // Iterate over the map and display bogie details
+        System.out.println("Bogie Capacities:");
+        for (Map.Entry<String, Integer> entry : bogieCapacityMap.entrySet()) {
+            System.out.println("Bogie: " + entry.getKey() + " | Capacity: " + entry.getValue());
         }
 
-        // Display final formation
-        System.out.println("Final train formation (insertion order preserved, no duplicates): " + trainFormation);
+        // Example: Lookup a specific bogie's capacity
+        String bogieToCheck = "AC Chair";
+        if (bogieCapacityMap.containsKey(bogieToCheck)) {
+            System.out.println("\nLookup: " + bogieToCheck + " has capacity " + bogieCapacityMap.get(bogieToCheck));
+        }
     }
 }
