@@ -1,63 +1,106 @@
 import java.util.*;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class TRAINAPP {
+public class QuantityMeasurementAppTest {
 
-    // ✅ Binary Search Method
-    public static boolean binarySearch(String[] bogieIds, String key) {
+    // ✅ Core Logic Class
+    static class TrainConsistManager {
 
-        int low = 0;
-        int high = bogieIds.length - 1;
+        public boolean binarySearchBogie(String[] bogies, String key) {
 
-        while (low <= high) {
-
-            // Calculate mid index
-            int mid = (low + high) / 2;
-
-            // 🔍 Compare using compareTo()
-            int result = bogieIds[mid].compareTo(key);
-
-            if (result == 0) {
-                return true; // ✅ Found
-            } else if (result < 0) {
-                low = mid + 1; // Search right half
-            } else {
-                high = mid - 1; // Search left half
+            // ✅ Handle empty array
+            if (bogies == null || bogies.length == 0) {
+                return false;
             }
-        }
 
-        return false; // ❌ Not found
+            // ✅ Ensure sorted input (important precondition)
+            Arrays.sort(bogies);
+
+            int low = 0;
+            int high = bogies.length - 1;
+
+            // ✅ Binary Search Logic
+            while (low <= high) {
+                int mid = (low + high) / 2;
+
+                int comparison = bogies[mid].compareTo(key);
+
+                if (comparison == 0) {
+                    return true; // Found
+                } else if (comparison < 0) {
+                    low = mid + 1; // Search right
+                } else {
+                    high = mid - 1; // Search left
+                }
+            }
+
+            return false; // Not found
+        }
     }
 
-    public static void main(String[] args) {
+    // ✅ Test Cases
 
-        // ✅ Unsorted input (will be sorted first)
-        String[] bogieIds = {
-                "BG309", "BG101", "BG550", "BG205", "BG412"
-        };
+    @Test
+    void testBinarySearch_BogieFound() {
+        TrainConsistManager manager = new TrainConsistManager();
 
-        Scanner scanner = new Scanner(System.in);
+        String[] bogies = {"BG101","BG205","BG309","BG412","BG550"};
 
-        System.out.println("===== BINARY SEARCH SYSTEM =====");
+        assertTrue(manager.binarySearchBogie(bogies, "BG309"));
+    }
 
-        // ✅ Ensure sorted order (Precondition)
-        Arrays.sort(bogieIds);
+    @Test
+    void testBinarySearch_BogieNotFound() {
+        TrainConsistManager manager = new TrainConsistManager();
 
-        System.out.println("Sorted Bogies: " + Arrays.toString(bogieIds));
+        String[] bogies = {"BG101","BG205","BG309","BG412","BG550"};
 
-        // 🔎 User input
-        System.out.print("Enter Bogie ID to search: ");
-        String searchKey = scanner.nextLine();
+        assertFalse(manager.binarySearchBogie(bogies, "BG999"));
+    }
 
-        // Perform Binary Search
-        boolean found = binarySearch(bogieIds, searchKey);
+    @Test
+    void testBinarySearch_FirstElementMatch() {
+        TrainConsistManager manager = new TrainConsistManager();
 
-        // Display result
-        if (found) {
-            System.out.println("✅ Bogie ID " + searchKey + " FOUND.");
-        } else {
-            System.out.println("❌ Bogie ID " + searchKey + " NOT FOUND.");
-        }
+        String[] bogies = {"BG101","BG205","BG309","BG412","BG550"};
 
-        System.out.println("\nSearch completed using Binary Search.");
+        assertTrue(manager.binarySearchBogie(bogies, "BG101"));
+    }
+
+    @Test
+    void testBinarySearch_LastElementMatch() {
+        TrainConsistManager manager = new TrainConsistManager();
+
+        String[] bogies = {"BG101","BG205","BG309","BG412","BG550"};
+
+        assertTrue(manager.binarySearchBogie(bogies, "BG550"));
+    }
+
+    @Test
+    void testBinarySearch_SingleElementArray() {
+        TrainConsistManager manager = new TrainConsistManager();
+
+        String[] bogies = {"BG101"};
+
+        assertTrue(manager.binarySearchBogie(bogies, "BG101"));
+    }
+
+    @Test
+    void testBinarySearch_EmptyArray() {
+        TrainConsistManager manager = new TrainConsistManager();
+
+        String[] bogies = {};
+
+        assertFalse(manager.binarySearchBogie(bogies, "BG101"));
+    }
+
+    @Test
+    void testBinarySearch_UnsortedInputHandled() {
+        TrainConsistManager manager = new TrainConsistManager();
+
+        String[] bogies = {"BG309","BG101","BG550","BG205","BG412"};
+
+        assertTrue(manager.binarySearchBogie(bogies, "BG205"));
     }
 }
