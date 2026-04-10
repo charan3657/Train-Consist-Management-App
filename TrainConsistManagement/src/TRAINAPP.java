@@ -1,5 +1,4 @@
 import java.util.*;
-import java.util.regex.*;
 
 // Base class
 abstract class Bogie {
@@ -11,47 +10,40 @@ abstract class Bogie {
         this.capacity = capacity;
     }
 
-    public int getCapacity() {
-        return capacity;
-    }
-
-    public abstract String getCategory();
+    public abstract String getType();
 
     @Override
     public String toString() {
         return "Bogie ID: " + bogieId +
-                " | Category: " + getCategory() +
+                " | Type: " + getType() +
                 " | Capacity: " + capacity;
-    }
-}
-
-// Passenger Bogie
-class PassengerBogie extends Bogie {
-    private String category;
-
-    public PassengerBogie(String bogieId, String category, int capacity) {
-        super(bogieId, capacity);
-        this.category = category;
-    }
-
-    @Override
-    public String getCategory() {
-        return category;
     }
 }
 
 // Goods Bogie
 class GoodsBogie extends Bogie {
-    private String cargoType;
 
-    public GoodsBogie(String bogieId, String cargoType, int capacity) {
+    private String type;   // Cylindrical / Rectangular / Open / Box
+    private String cargo;  // Petroleum / Coal / Grain etc.
+
+    public GoodsBogie(String bogieId, String type, String cargo, int capacity) {
         super(bogieId, capacity);
-        this.cargoType = cargoType;
+        this.type = type;
+        this.cargo = cargo;
+    }
+
+    public String getCargo() {
+        return cargo;
     }
 
     @Override
-    public String getCategory() {
-        return cargoType;
+    public String getType() {
+        return type;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + " | Cargo: " + cargo;
     }
 }
 
@@ -60,50 +52,33 @@ public class TRAINAPP {
 
     public static void main(String[] args) {
 
-        Scanner scanner = new Scanner(System.in);
+        List<GoodsBogie> goodsBogies = new ArrayList<>();
 
-        // ✅ Regex Patterns
-        Pattern trainPattern = Pattern.compile("TRN-\\d{4}");
-        Pattern cargoPattern = Pattern.compile("PET-[A-Z]{2}");
+        // Sample Data
+        goodsBogies.add(new GoodsBogie("G1", "Cylindrical", "Petroleum", 100));
+        goodsBogies.add(new GoodsBogie("G2", "Rectangular", "Coal", 120));
+        goodsBogies.add(new GoodsBogie("G3", "Cylindrical", "Petroleum", 90));
 
-        // User Input
-        System.out.print("Enter Train ID (Format: TRN-1234): ");
-        String trainId = scanner.nextLine();
+        // Try invalid case:
+        // goodsBogies.add(new GoodsBogie("G4", "Cylindrical", "Coal", 80));
 
-        System.out.print("Enter Cargo Code (Format: PET-AB): ");
-        String cargoCode = scanner.nextLine();
+        System.out.println("===== GOODS BOGIES =====");
+        goodsBogies.forEach(System.out::println);
 
-        // Validation using Matcher
-        Matcher trainMatcher = trainPattern.matcher(trainId);
-        Matcher cargoMatcher = cargoPattern.matcher(cargoCode);
+        // ✅ UC12: Safety Compliance Check
+        boolean isSafe = goodsBogies.stream()
+                .allMatch(b ->
+                        // Rule: Cylindrical → only Petroleum
+                        !b.getType().equalsIgnoreCase("Cylindrical") ||
+                                b.getCargo().equalsIgnoreCase("Petroleum")
+                );
 
-        boolean isTrainValid = trainMatcher.matches();
-        boolean isCargoValid = cargoMatcher.matches();
+        System.out.println("\n===== SAFETY VALIDATION RESULT =====");
 
-        // Output Results
-        System.out.println("\n===== VALIDATION RESULT =====");
-
-        if (isTrainValid) {
-            System.out.println("Train ID is VALID");
+        if (isSafe) {
+            System.out.println("Train is SAFE for operation ✅");
         } else {
-            System.out.println("Train ID is INVALID");
+            System.out.println("Train is NOT SAFE ❌ (Invalid cargo in cylindrical bogie)");
         }
-
-        if (isCargoValid) {
-            System.out.println("Cargo Code is VALID");
-        } else {
-            System.out.println("Cargo Code is INVALID");
-        }
-
-        // Continue Program (Sample Bogie List)
-        List<Bogie> bogieList = new ArrayList<>();
-        bogieList.add(new PassengerBogie("B1", "Sleeper", 72));
-        bogieList.add(new PassengerBogie("B2", "AC Chair", 60));
-        bogieList.add(new GoodsBogie("G1", "Cylindrical", 100));
-
-        System.out.println("\n===== SAMPLE BOGIES =====");
-        bogieList.forEach(System.out::println);
-
-        scanner.close();
     }
 }
