@@ -1,28 +1,70 @@
-import java.util.Arrays;
+import java.util.*;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
-// Main Application
-public class TRAINAPP {
+public class QuantityMeasurementAppTest {
 
-    public static void main(String[] args) {
+    // ✅ Core Logic Class
+    static class TrainConsistManager {
 
-        // ✅ Array of bogie type names
-        String[] bogieNames = {
-                "Sleeper",
-                "AC Chair",
-                "First Class",
-                "General",
-                "Luxury"
-        };
+        public String[] sortBogies(String[] bogies) {
 
-        System.out.println("===== BEFORE SORTING =====");
-        System.out.println(Arrays.toString(bogieNames));
+            // ✅ Use built-in sorting
+            Arrays.sort(bogies);
 
-        // ✅ Built-in Sorting
-        Arrays.sort(bogieNames);
+            return bogies;
+        }
+    }
 
-        System.out.println("\n===== AFTER SORTING =====");
-        System.out.println(Arrays.toString(bogieNames));
+    // ✅ Test Cases
 
-        System.out.println("\nSorting completed using Arrays.sort().");
+    @Test
+    void testSort_BasicAlphabeticalSorting() {
+        TrainConsistManager manager = new TrainConsistManager();
+
+        String[] input = {"Sleeper","AC Chair","First Class","General","Luxury"};
+        String[] expected = {"AC Chair","First Class","General","Luxury","Sleeper"};
+
+        assertArrayEquals(expected, manager.sortBogies(input));
+    }
+
+    @Test
+    void testSort_UnsortedInput() {
+        TrainConsistManager manager = new TrainConsistManager();
+
+        String[] input = {"Luxury","General","Sleeper","AC Chair"};
+        String[] expected = {"AC Chair","General","Luxury","Sleeper"};
+
+        assertArrayEquals(expected, manager.sortBogies(input));
+    }
+
+    @Test
+    void testSort_AlreadySortedArray() {
+        TrainConsistManager manager = new TrainConsistManager();
+
+        String[] input = {"AC Chair","First Class","General"};
+        String[] expected = {"AC Chair","First Class","General"};
+
+        assertArrayEquals(expected, manager.sortBogies(input));
+    }
+
+    @Test
+    void testSort_DuplicateBogieNames() {
+        TrainConsistManager manager = new TrainConsistManager();
+
+        String[] input = {"Sleeper","AC Chair","Sleeper","General"};
+        String[] expected = {"AC Chair","General","Sleeper","Sleeper"};
+
+        assertArrayEquals(expected, manager.sortBogies(input));
+    }
+
+    @Test
+    void testSort_SingleElementArray() {
+        TrainConsistManager manager = new TrainConsistManager();
+
+        String[] input = {"Sleeper"};
+        String[] expected = {"Sleeper"};
+
+        assertArrayEquals(expected, manager.sortBogies(input));
     }
 }
