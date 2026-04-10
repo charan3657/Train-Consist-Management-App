@@ -1,28 +1,48 @@
-import java.util.Arrays;
+import java.util.*;
 
 // Main Application
 public class TRAINAPP {
 
+    // ✅ Linear Search Method
+    public static boolean linearSearch(String[] bogieIds, String key) {
+
+        for (int i = 0; i < bogieIds.length; i++) {
+
+            // 🔍 Compare using equals()
+            if (bogieIds[i].equals(key)) {
+                return true; // ✅ Found → stop early
+            }
+        }
+
+        return false; // ❌ Not found after full traversal
+    }
+
     public static void main(String[] args) {
 
-        // ✅ Array of bogie type names
-        String[] bogieNames = {
-                "Sleeper",
-                "AC Chair",
-                "First Class",
-                "General",
-                "Luxury"
+        // ✅ Array of Bogie IDs (unsorted)
+        String[] bogieIds = {
+                "BG101", "BG205", "BG309", "BG412", "BG550"
         };
 
-        System.out.println("===== BEFORE SORTING =====");
-        System.out.println(Arrays.toString(bogieNames));
+        Scanner scanner = new Scanner(System.in);
 
-        // ✅ Built-in Sorting
-        Arrays.sort(bogieNames);
+        System.out.println("===== BOGIE SEARCH SYSTEM =====");
+        System.out.println("Available Bogies: " + Arrays.toString(bogieIds));
 
-        System.out.println("\n===== AFTER SORTING =====");
-        System.out.println(Arrays.toString(bogieNames));
+        // 🔎 User input
+        System.out.print("Enter Bogie ID to search: ");
+        String searchKey = scanner.nextLine();
 
-        System.out.println("\nSorting completed using Arrays.sort().");
+        // Perform Linear Search
+        boolean found = linearSearch(bogieIds, searchKey);
+
+        // Display Result
+        if (found) {
+            System.out.println("✅ Bogie ID " + searchKey + " FOUND in the train consist.");
+        } else {
+            System.out.println("❌ Bogie ID " + searchKey + " NOT FOUND.");
+        }
+
+        System.out.println("\nSearch operation completed.");
     }
 }
