@@ -1,84 +1,82 @@
-// Passenger Bogie Class
-class PassengerBogie {
+import java.util.*;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
-    private String bogieId;
-    private int capacity;
+public class QuantityMeasurementAppTest {
 
-    public PassengerBogie(String bogieId, int capacity) {
-        this.bogieId = bogieId;
-        this.capacity = capacity;
-    }
+    // ✅ Core Logic Class
+    static class TrainConsistManager {
 
-    public int getCapacity() {
-        return capacity;
-    }
+        public int[] sortCapacities(int[] capacities) {
 
-    public String getBogieId() {
-        return bogieId;
-    }
+            int n = capacities.length;
 
-    @Override
-    public String toString() {
-        return "Bogie ID: " + bogieId + " | Capacity: " + capacity;
-    }
-}
+            // ✅ Bubble Sort Logic
+            for (int i = 0; i < n - 1; i++) {
+                for (int j = 0; j < n - i - 1; j++) {
 
-// Main Application
-public class TRAINAPP {
-
-    // ✅ Bubble Sort Method
-    public static void bubbleSort(int[] capacities) {
-
-        int n = capacities.length;
-
-        for (int i = 0; i < n - 1; i++) {
-
-            // Optimization: track if swap happens
-            boolean swapped = false;
-
-            for (int j = 0; j < n - i - 1; j++) {
-
-                // 🔴 Compare adjacent elements
-                if (capacities[j] > capacities[j + 1]) {
-
-                    // 🔁 Swap
-                    int temp = capacities[j];
-                    capacities[j] = capacities[j + 1];
-                    capacities[j + 1] = temp;
-
-                    swapped = true;
+                    if (capacities[j] > capacities[j + 1]) {
+                        // ✅ Swap
+                        int temp = capacities[j];
+                        capacities[j] = capacities[j + 1];
+                        capacities[j + 1] = temp;
+                    }
                 }
             }
 
-            // If no swaps → already sorted
-            if (!swapped) {
-                break;
-            }
+            return capacities;
         }
     }
 
-    // Utility method to print array
-    public static void printArray(int[] arr) {
-        for (int value : arr) {
-            System.out.print(value + " ");
-        }
-        System.out.println();
+    // ✅ Test Cases
+
+    @Test
+    void testSort_BasicSorting() {
+        TrainConsistManager manager = new TrainConsistManager();
+
+        int[] input = {72, 56, 24, 70, 60};
+        int[] expected = {24, 56, 60, 70, 72};
+
+        assertArrayEquals(expected, manager.sortCapacities(input));
     }
 
-    public static void main(String[] args) {
+    @Test
+    void testSort_AlreadySortedArray() {
+        TrainConsistManager manager = new TrainConsistManager();
 
-        // Sample passenger bogie capacities
-        int[] capacities = {72, 56, 24, 70, 60};
+        int[] input = {24, 56, 60, 70, 72};
+        int[] expected = {24, 56, 60, 70, 72};
 
-        System.out.println("===== BEFORE SORTING =====");
-        printArray(capacities);
+        assertArrayEquals(expected, manager.sortCapacities(input));
+    }
 
-        // Perform Bubble Sort
-        bubbleSort(capacities);
+    @Test
+    void testSort_DuplicateValues() {
+        TrainConsistManager manager = new TrainConsistManager();
 
-        System.out.println("\n===== AFTER SORTING =====");
-        printArray(capacities);
+        int[] input = {72, 56, 56, 24};
+        int[] expected = {24, 56, 56, 72};
 
-        System.out.println("\nSorting completed using Bubble Sort algorithm.");
+        assertArrayEquals(expected, manager.sortCapacities(input));
+    }
+
+    @Test
+    void testSort_SingleElementArray() {
+        TrainConsistManager manager = new TrainConsistManager();
+
+        int[] input = {50};
+        int[] expected = {50};
+
+        assertArrayEquals(expected, manager.sortCapacities(input));
+    }
+
+    @Test
+    void testSort_AllEqualValues() {
+        TrainConsistManager manager = new TrainConsistManager();
+
+        int[] input = {40, 40, 40};
+        int[] expected = {40, 40, 40};
+
+        assertArrayEquals(expected, manager.sortCapacities(input));
     }
 }
