@@ -1,49 +1,23 @@
 import java.util.*;
+import java.util.stream.Collectors;
 
 // Base class
-abstract class Bogie {
-    protected String bogieId;
-    protected int capacity;
+class Bogie {
+    private String bogieId;
+    private int capacity;
 
     public Bogie(String bogieId, int capacity) {
         this.bogieId = bogieId;
         this.capacity = capacity;
     }
 
-    public abstract String getType();
-
-    @Override
-    public String toString() {
-        return "Bogie ID: " + bogieId +
-                " | Type: " + getType() +
-                " | Capacity: " + capacity;
-    }
-}
-
-// Goods Bogie
-class GoodsBogie extends Bogie {
-
-    private String type;   // Cylindrical / Rectangular / Open / Box
-    private String cargo;  // Petroleum / Coal / Grain etc.
-
-    public GoodsBogie(String bogieId, String type, String cargo, int capacity) {
-        super(bogieId, capacity);
-        this.type = type;
-        this.cargo = cargo;
-    }
-
-    public String getCargo() {
-        return cargo;
-    }
-
-    @Override
-    public String getType() {
-        return type;
+    public int getCapacity() {
+        return capacity;
     }
 
     @Override
     public String toString() {
-        return super.toString() + " | Cargo: " + cargo;
+        return "Bogie ID: " + bogieId + " | Capacity: " + capacity;
     }
 }
 
@@ -52,33 +26,58 @@ public class TRAINAPP {
 
     public static void main(String[] args) {
 
-        List<GoodsBogie> goodsBogies = new ArrayList<>();
+        List<Bogie> bogieList = new ArrayList<>();
 
-        // Sample Data
-        goodsBogies.add(new GoodsBogie("G1", "Cylindrical", "Petroleum", 100));
-        goodsBogies.add(new GoodsBogie("G2", "Rectangular", "Coal", 120));
-        goodsBogies.add(new GoodsBogie("G3", "Cylindrical", "Petroleum", 90));
+        // 🔹 Create large dataset (for realistic benchmarking)
+        for (int i = 1; i <= 100000; i++) {
+            bogieList.add(new Bogie("B" + i, (i % 100) + 1));
+        }
 
-        // Try invalid case:
-        // goodsBogies.add(new GoodsBogie("G4", "Cylindrical", "Coal", 80));
+        System.out.println("Total Bogies: " + bogieList.size());
 
-        System.out.println("===== GOODS BOGIES =====");
-        goodsBogies.forEach(System.out::println);
+        // ============================
+        // ✅ Loop-Based Filtering
+        // ============================
+        long startLoop = System.nanoTime();
 
-        // ✅ UC12: Safety Compliance Check
-        boolean isSafe = goodsBogies.stream()
-                .allMatch(b ->
-                        // Rule: Cylindrical → only Petroleum
-                        !b.getType().equalsIgnoreCase("Cylindrical") ||
-                                b.getCargo().equalsIgnoreCase("Petroleum")
-                );
+        List<Bogie> loopResult = new ArrayList<>();
+        for (Bogie b : bogieList) {
+            if (b.getCapacity() > 60) {
+                loopResult.add(b);
+            }
+        }
 
-        System.out.println("\n===== SAFETY VALIDATION RESULT =====");
+        long endLoop = System.nanoTime();
+        long loopTime = endLoop - startLoop;
 
-        if (isSafe) {
-            System.out.println("Train is SAFE for operation ✅");
+        // ============================
+        // ✅ Stream-Based Filtering
+        // ============================
+        long startStream = System.nanoTime();
+
+        List<Bogie> streamResult = bogieList.stream()
+                .filter(b -> b.getCapacity() > 60)
+                .collect(Collectors.toList());
+
+        long endStream = System.nanoTime();
+        long streamTime = endStream - startStream;
+
+        // ============================
+        // ✅ Output Results
+        // ============================
+        System.out.println("\n===== PERFORMANCE COMPARISON =====");
+
+        System.out.println("Loop Filtering Time (ns): " + loopTime);
+        System.out.println("Stream Filtering Time (ns): " + streamTime);
+
+        System.out.println("\n===== RESULT VALIDATION =====");
+        System.out.println("Loop Result Size: " + loopResult.size());
+        System.out.println("Stream Result Size: " + streamResult.size());
+
+        if (loopResult.size() == streamResult.size()) {
+            System.out.println("✅ Both approaches produce SAME results");
         } else {
-            System.out.println("Train is NOT SAFE ❌ (Invalid cargo in cylindrical bogie)");
+            System.out.println("❌ Results differ");
         }
     }
 }
