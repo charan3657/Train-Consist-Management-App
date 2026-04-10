@@ -19,17 +19,18 @@ abstract class Bogie {
         return bogieId;
     }
 
-    public abstract String getType();
+    // Used for grouping
+    public abstract String getCategory();
 
     @Override
     public String toString() {
         return "Bogie ID: " + bogieId +
-                " | Type: " + getType() +
+                " | Category: " + getCategory() +
                 " | Capacity: " + capacity;
     }
 }
 
-// Passenger Bogie class
+// Passenger Bogie
 class PassengerBogie extends Bogie {
 
     private String category; // Sleeper, AC Chair, First Class
@@ -40,8 +41,24 @@ class PassengerBogie extends Bogie {
     }
 
     @Override
-    public String getType() {
-        return "Passenger - " + category;
+    public String getCategory() {
+        return category;
+    }
+}
+
+// Goods Bogie (optional but included for realism)
+class GoodsBogie extends Bogie {
+
+    private String cargoType; // Rectangular / Cylindrical
+
+    public GoodsBogie(String bogieId, String cargoType, int capacity) {
+        super(bogieId, capacity);
+        this.cargoType = cargoType;
+    }
+
+    @Override
+    public String getCategory() {
+        return cargoType;
     }
 }
 
@@ -50,39 +67,41 @@ public class TRAINAPP {
 
     public static void main(String[] args) {
 
-        Scanner scanner = new Scanner(System.in);
         List<Bogie> bogieList = new ArrayList<>();
 
-        // Sample data (reuse from UC7 concept)
+        // Sample Data (reuse from UC7/UC8)
         bogieList.add(new PassengerBogie("B1", "Sleeper", 72));
         bogieList.add(new PassengerBogie("B2", "AC Chair", 60));
         bogieList.add(new PassengerBogie("B3", "First Class", 50));
         bogieList.add(new PassengerBogie("B4", "Sleeper", 80));
         bogieList.add(new PassengerBogie("B5", "AC Chair", 65));
 
+        // Goods Bogies
+        bogieList.add(new GoodsBogie("G1", "Cylindrical", 100));
+        bogieList.add(new GoodsBogie("G2", "Rectangular", 120));
+        bogieList.add(new GoodsBogie("G3", "Cylindrical", 90));
+
         System.out.println("===== ALL BOGIES =====");
         bogieList.forEach(System.out::println);
 
-        // UC8: Stream Filtering
-        System.out.print("\nEnter capacity threshold: ");
-        int threshold = scanner.nextInt();
+        // ✅ UC9: Grouping using Stream API
+        Map<String, List<Bogie>> groupedBogies = bogieList.stream()
+                .collect(Collectors.groupingBy(b -> b.getCategory()));
 
-        List<Bogie> filteredBogies = bogieList.stream()
-                .filter(b -> b.getCapacity() > threshold)
-                .collect(Collectors.toList());
+        // Display grouped result
+        System.out.println("\n===== GROUPED BOGIES BY TYPE =====");
 
-        System.out.println("\n===== FILTERED BOGIES (Capacity > " + threshold + ") =====");
-
-        if (filteredBogies.isEmpty()) {
-            System.out.println("No bogies match the given condition.");
+        if (groupedBogies.isEmpty()) {
+            System.out.println("No bogies available.");
         } else {
-            filteredBogies.forEach(System.out::println);
+            for (Map.Entry<String, List<Bogie>> entry : groupedBogies.entrySet()) {
+                System.out.println("\nCategory: " + entry.getKey());
+                entry.getValue().forEach(System.out::println);
+            }
         }
 
         // Verify original list unchanged
         System.out.println("\n===== ORIGINAL LIST (UNCHANGED) =====");
         bogieList.forEach(System.out::println);
-
-        scanner.close();
     }
 }
