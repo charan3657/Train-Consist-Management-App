@@ -1,67 +1,82 @@
 import java.util.*;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class TRAINAPP {
+public class QuantityMeasurementAppTest {
 
-    // ✅ Binary Search with Validation
-    public static boolean searchBogie(String[] bogieIds, String key) {
+    // ✅ Core Logic Class
+    static class TrainConsistManager {
 
-        // 🔴 Fail-Fast Validation
-        if (bogieIds == null || bogieIds.length == 0) {
-            throw new IllegalStateException("No bogies available in the train to search.");
+        private List<String> bogies;
+
+        public TrainConsistManager(List<String> bogies) {
+            this.bogies = bogies;
         }
 
-        // Ensure sorted data (for Binary Search)
-        Arrays.sort(bogieIds);
-
-        int low = 0;
-        int high = bogieIds.length - 1;
-
-        while (low <= high) {
-
-            int mid = (low + high) / 2;
-            int result = bogieIds[mid].compareTo(key);
-
-            if (result == 0) {
-                return true; // ✅ Found
-            } else if (result < 0) {
-                low = mid + 1;
-            } else {
-                high = mid - 1;
+        public boolean searchBogie(String bogieId) {
+            // ✅ Fail-Fast Validation
+            if (bogies == null || bogies.isEmpty()) {
+                throw new IllegalStateException(
+                        "Search operation failed: No bogies available in the train."
+                );
             }
-        }
 
-        return false; // ❌ Not found
+            // ✅ Search Logic
+            for (String bogie : bogies) {
+                if (bogie.equals(bogieId)) {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 
-    public static void main(String[] args) {
+    // ✅ Test Cases
 
-        Scanner scanner = new Scanner(System.in);
+    @Test
+    void testSearch_ThrowsExceptionWhenEmpty() {
+        TrainConsistManager manager = new TrainConsistManager(Collections.emptyList());
 
-        // 🔁 Change this array to test scenarios
-        String[] bogieIds = {
-                "BG101", "BG205", "BG309"
-        };
+        assertThrows(IllegalStateException.class, () -> {
+            manager.searchBogie("BG101");
+        });
+    }
 
-        System.out.println("===== SAFE SEARCH SYSTEM =====");
+    @Test
+    void testSearch_AllowsSearchWhenDataExists() {
+        TrainConsistManager manager = new TrainConsistManager(
+                Arrays.asList("BG101", "BG205")
+        );
 
-        System.out.print("Enter Bogie ID to search: ");
-        String searchKey = scanner.nextLine();
+        assertDoesNotThrow(() -> {
+            manager.searchBogie("BG101");
+        });
+    }
 
-        try {
-            boolean found = searchBogie(bogieIds, searchKey);
+    @Test
+    void testSearch_BogieFoundAfterValidation() {
+        TrainConsistManager manager = new TrainConsistManager(
+                Arrays.asList("BG101", "BG205", "BG309")
+        );
 
-            if (found) {
-                System.out.println("✅ Bogie ID " + searchKey + " FOUND.");
-            } else {
-                System.out.println("❌ Bogie ID " + searchKey + " NOT FOUND.");
-            }
+        assertTrue(manager.searchBogie("BG205"));
+    }
 
-        } catch (IllegalStateException e) {
+    @Test
+    void testSearch_BogieNotFoundAfterValidation() {
+        TrainConsistManager manager = new TrainConsistManager(
+                Arrays.asList("BG101", "BG205", "BG309")
+        );
 
-            // ✅ Graceful handling of fail-fast exception
-            System.out.println("Error: " + e.getMessage());
-        }
+        assertFalse(manager.searchBogie("BG999"));
+    }
 
-        System.out.println("\nProgram continues safely...");
+    @Test
+    void testSearch_SingleElementValidCase() {
+        TrainConsistManager manager = new TrainConsistManager(
+                Arrays.asList("BG101")
+        );
+
+        assertTrue(manager.searchBogie("BG101"));
     }
 }
