@@ -1,10 +1,17 @@
 import java.util.*;
-import java.util.stream.Collectors;
+
+// ✅ Custom Exception Class
+class InvalidCapacityException extends Exception {
+
+    public InvalidCapacityException(String message) {
+        super(message);
+    }
+}
 
 // Base class
-class Bogie {
-    private String bogieId;
-    private int capacity;
+abstract class Bogie {
+    protected String bogieId;
+    protected int capacity;
 
     public Bogie(String bogieId, int capacity) {
         this.bogieId = bogieId;
@@ -15,9 +22,37 @@ class Bogie {
         return capacity;
     }
 
+    public abstract String getType();
+
     @Override
     public String toString() {
-        return "Bogie ID: " + bogieId + " | Capacity: " + capacity;
+        return "Bogie ID: " + bogieId +
+                " | Type: " + getType() +
+                " | Capacity: " + capacity;
+    }
+}
+
+// ✅ Passenger Bogie with Validation
+class PassengerBogie extends Bogie {
+
+    private String category;
+
+    public PassengerBogie(String bogieId, String category, int capacity)
+            throws InvalidCapacityException {
+
+        super(bogieId, capacity);
+
+        // 🔴 Validation (Fail-Fast)
+        if (capacity <= 0) {
+            throw new InvalidCapacityException("Capacity must be greater than zero");
+        }
+
+        this.category = category;
+    }
+
+    @Override
+    public String getType() {
+        return "Passenger - " + category;
     }
 }
 
@@ -28,56 +63,22 @@ public class TRAINAPP {
 
         List<Bogie> bogieList = new ArrayList<>();
 
-        // 🔹 Create large dataset (for realistic benchmarking)
-        for (int i = 1; i <= 100000; i++) {
-            bogieList.add(new Bogie("B" + i, (i % 100) + 1));
+        System.out.println("===== CREATING BOGIES =====");
+
+        try {
+            // ✅ Valid Bogies
+            bogieList.add(new PassengerBogie("B1", "Sleeper", 72));
+            bogieList.add(new PassengerBogie("B2", "AC Chair", 60));
+
+            // ❌ Invalid Bogie (will throw exception)
+            bogieList.add(new PassengerBogie("B3", "First Class", -10));
+
+        } catch (InvalidCapacityException e) {
+            System.out.println("Exception Caught: " + e.getMessage());
         }
 
-        System.out.println("Total Bogies: " + bogieList.size());
-
-        // ============================
-        // ✅ Loop-Based Filtering
-        // ============================
-        long startLoop = System.nanoTime();
-
-        List<Bogie> loopResult = new ArrayList<>();
-        for (Bogie b : bogieList) {
-            if (b.getCapacity() > 60) {
-                loopResult.add(b);
-            }
-        }
-
-        long endLoop = System.nanoTime();
-        long loopTime = endLoop - startLoop;
-
-        // ============================
-        // ✅ Stream-Based Filtering
-        // ============================
-        long startStream = System.nanoTime();
-
-        List<Bogie> streamResult = bogieList.stream()
-                .filter(b -> b.getCapacity() > 60)
-                .collect(Collectors.toList());
-
-        long endStream = System.nanoTime();
-        long streamTime = endStream - startStream;
-
-        // ============================
-        // ✅ Output Results
-        // ============================
-        System.out.println("\n===== PERFORMANCE COMPARISON =====");
-
-        System.out.println("Loop Filtering Time (ns): " + loopTime);
-        System.out.println("Stream Filtering Time (ns): " + streamTime);
-
-        System.out.println("\n===== RESULT VALIDATION =====");
-        System.out.println("Loop Result Size: " + loopResult.size());
-        System.out.println("Stream Result Size: " + streamResult.size());
-
-        if (loopResult.size() == streamResult.size()) {
-            System.out.println("✅ Both approaches produce SAME results");
-        } else {
-            System.out.println("❌ Results differ");
-        }
+        // Continue program execution
+        System.out.println("\n===== VALID BOGIES IN TRAIN =====");
+        bogieList.forEach(System.out::println);
     }
 }
