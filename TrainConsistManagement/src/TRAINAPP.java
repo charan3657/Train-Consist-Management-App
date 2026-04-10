@@ -19,7 +19,6 @@ abstract class Bogie {
         return bogieId;
     }
 
-    // Used for grouping
     public abstract String getCategory();
 
     @Override
@@ -32,8 +31,7 @@ abstract class Bogie {
 
 // Passenger Bogie
 class PassengerBogie extends Bogie {
-
-    private String category; // Sleeper, AC Chair, First Class
+    private String category;
 
     public PassengerBogie(String bogieId, String category, int capacity) {
         super(bogieId, capacity);
@@ -46,10 +44,9 @@ class PassengerBogie extends Bogie {
     }
 }
 
-// Goods Bogie (optional but included for realism)
+// Goods Bogie
 class GoodsBogie extends Bogie {
-
-    private String cargoType; // Rectangular / Cylindrical
+    private String cargoType;
 
     public GoodsBogie(String bogieId, String cargoType, int capacity) {
         super(bogieId, capacity);
@@ -63,42 +60,32 @@ class GoodsBogie extends Bogie {
 }
 
 // Main Application
-public class TRAINAPP {
+class TrainConsistManagementApp {
 
     public static void main(String[] args) {
 
         List<Bogie> bogieList = new ArrayList<>();
 
-        // Sample Data (reuse from UC7/UC8)
+        // Sample Data
         bogieList.add(new PassengerBogie("B1", "Sleeper", 72));
         bogieList.add(new PassengerBogie("B2", "AC Chair", 60));
         bogieList.add(new PassengerBogie("B3", "First Class", 50));
         bogieList.add(new PassengerBogie("B4", "Sleeper", 80));
         bogieList.add(new PassengerBogie("B5", "AC Chair", 65));
 
-        // Goods Bogies
         bogieList.add(new GoodsBogie("G1", "Cylindrical", 100));
         bogieList.add(new GoodsBogie("G2", "Rectangular", 120));
-        bogieList.add(new GoodsBogie("G3", "Cylindrical", 90));
 
         System.out.println("===== ALL BOGIES =====");
         bogieList.forEach(System.out::println);
 
-        // ✅ UC9: Grouping using Stream API
-        Map<String, List<Bogie>> groupedBogies = bogieList.stream()
-                .collect(Collectors.groupingBy(b -> b.getCategory()));
+        // ✅ UC10: Aggregation using map() and reduce()
+        int totalCapacity = bogieList.stream()
+                .map(b -> b.getCapacity())   // Extract capacity
+                .reduce(0, Integer::sum);    // Sum all values
 
-        // Display grouped result
-        System.out.println("\n===== GROUPED BOGIES BY TYPE =====");
-
-        if (groupedBogies.isEmpty()) {
-            System.out.println("No bogies available.");
-        } else {
-            for (Map.Entry<String, List<Bogie>> entry : groupedBogies.entrySet()) {
-                System.out.println("\nCategory: " + entry.getKey());
-                entry.getValue().forEach(System.out::println);
-            }
-        }
+        System.out.println("\n===== TOTAL SEATING CAPACITY =====");
+        System.out.println("Total Capacity of Train: " + totalCapacity);
 
         // Verify original list unchanged
         System.out.println("\n===== ORIGINAL LIST (UNCHANGED) =====");
