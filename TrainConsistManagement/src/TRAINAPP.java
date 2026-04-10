@@ -1,48 +1,69 @@
 import java.util.*;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
-// Main Application
-public class TRAINAPP {
+public class QuantityMeasurementAppTest {
 
-    // ✅ Linear Search Method
-    public static boolean linearSearch(String[] bogieIds, String key) {
+    // ✅ Core Logic Class
+    static class TrainConsistManager {
 
-        for (int i = 0; i < bogieIds.length; i++) {
+        public boolean linearSearchBogie(String[] bogies, String key) {
 
-            // 🔍 Compare using equals()
-            if (bogieIds[i].equals(key)) {
-                return true; // ✅ Found → stop early
+            // ✅ Traverse array sequentially
+            for (String bogie : bogies) {
+                if (bogie.equals(key)) {
+                    return true; // Found → early termination
+                }
             }
-        }
 
-        return false; // ❌ Not found after full traversal
+            return false; // Not found after full traversal
+        }
     }
 
-    public static void main(String[] args) {
+    // ✅ Test Cases
 
-        // ✅ Array of Bogie IDs (unsorted)
-        String[] bogieIds = {
-                "BG101", "BG205", "BG309", "BG412", "BG550"
-        };
+    @Test
+    void testSearch_BogieFound() {
+        TrainConsistManager manager = new TrainConsistManager();
 
-        Scanner scanner = new Scanner(System.in);
+        String[] bogies = {"BG101","BG205","BG309","BG412","BG550"};
 
-        System.out.println("===== BOGIE SEARCH SYSTEM =====");
-        System.out.println("Available Bogies: " + Arrays.toString(bogieIds));
+        assertTrue(manager.linearSearchBogie(bogies, "BG309"));
+    }
 
-        // 🔎 User input
-        System.out.print("Enter Bogie ID to search: ");
-        String searchKey = scanner.nextLine();
+    @Test
+    void testSearch_BogieNotFound() {
+        TrainConsistManager manager = new TrainConsistManager();
 
-        // Perform Linear Search
-        boolean found = linearSearch(bogieIds, searchKey);
+        String[] bogies = {"BG101","BG205","BG309","BG412","BG550"};
 
-        // Display Result
-        if (found) {
-            System.out.println("✅ Bogie ID " + searchKey + " FOUND in the train consist.");
-        } else {
-            System.out.println("❌ Bogie ID " + searchKey + " NOT FOUND.");
-        }
+        assertFalse(manager.linearSearchBogie(bogies, "BG999"));
+    }
 
-        System.out.println("\nSearch operation completed.");
+    @Test
+    void testSearch_FirstElementMatch() {
+        TrainConsistManager manager = new TrainConsistManager();
+
+        String[] bogies = {"BG101","BG205","BG309","BG412","BG550"};
+
+        assertTrue(manager.linearSearchBogie(bogies, "BG101"));
+    }
+
+    @Test
+    void testSearch_LastElementMatch() {
+        TrainConsistManager manager = new TrainConsistManager();
+
+        String[] bogies = {"BG101","BG205","BG309","BG412","BG550"};
+
+        assertTrue(manager.linearSearchBogie(bogies, "BG550"));
+    }
+
+    @Test
+    void testSearch_SingleElementArray() {
+        TrainConsistManager manager = new TrainConsistManager();
+
+        String[] bogies = {"BG101"};
+
+        assertTrue(manager.linearSearchBogie(bogies, "BG101"));
     }
 }
