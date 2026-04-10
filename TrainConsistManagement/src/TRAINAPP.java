@@ -1,48 +1,63 @@
 import java.util.*;
 
-// Main Application
 public class TRAINAPP {
 
-    // ✅ Linear Search Method
-    public static boolean linearSearch(String[] bogieIds, String key) {
+    // ✅ Binary Search Method
+    public static boolean binarySearch(String[] bogieIds, String key) {
 
-        for (int i = 0; i < bogieIds.length; i++) {
+        int low = 0;
+        int high = bogieIds.length - 1;
 
-            // 🔍 Compare using equals()
-            if (bogieIds[i].equals(key)) {
-                return true; // ✅ Found → stop early
+        while (low <= high) {
+
+            // Calculate mid index
+            int mid = (low + high) / 2;
+
+            // 🔍 Compare using compareTo()
+            int result = bogieIds[mid].compareTo(key);
+
+            if (result == 0) {
+                return true; // ✅ Found
+            } else if (result < 0) {
+                low = mid + 1; // Search right half
+            } else {
+                high = mid - 1; // Search left half
             }
         }
 
-        return false; // ❌ Not found after full traversal
+        return false; // ❌ Not found
     }
 
     public static void main(String[] args) {
 
-        // ✅ Array of Bogie IDs (unsorted)
+        // ✅ Unsorted input (will be sorted first)
         String[] bogieIds = {
-                "BG101", "BG205", "BG309", "BG412", "BG550"
+                "BG309", "BG101", "BG550", "BG205", "BG412"
         };
 
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("===== BOGIE SEARCH SYSTEM =====");
-        System.out.println("Available Bogies: " + Arrays.toString(bogieIds));
+        System.out.println("===== BINARY SEARCH SYSTEM =====");
+
+        // ✅ Ensure sorted order (Precondition)
+        Arrays.sort(bogieIds);
+
+        System.out.println("Sorted Bogies: " + Arrays.toString(bogieIds));
 
         // 🔎 User input
         System.out.print("Enter Bogie ID to search: ");
         String searchKey = scanner.nextLine();
 
-        // Perform Linear Search
-        boolean found = linearSearch(bogieIds, searchKey);
+        // Perform Binary Search
+        boolean found = binarySearch(bogieIds, searchKey);
 
-        // Display Result
+        // Display result
         if (found) {
-            System.out.println("✅ Bogie ID " + searchKey + " FOUND in the train consist.");
+            System.out.println("✅ Bogie ID " + searchKey + " FOUND.");
         } else {
             System.out.println("❌ Bogie ID " + searchKey + " NOT FOUND.");
         }
 
-        System.out.println("\nSearch operation completed.");
+        System.out.println("\nSearch completed using Binary Search.");
     }
 }
